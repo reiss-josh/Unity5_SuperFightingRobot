@@ -5,25 +5,38 @@ using UnityEngine;
 public class MegaBullet : MonoBehaviour
 {
     public float bulletSpeed;
-    public enum shotDirsEnum {East = 1, West = -1, North = 2, South = -2};
+    public enum shotDirsEnum {West = 0, South = 1, East = 2, North = 3};
     public int shotDir;
+
+    private bool isRotated;
 
     void Awake()
     {
-        bulletSpeed = 0.015f;
+        bulletSpeed = 0.5f;
         shotDir = (int)shotDirsEnum.East;
+        isRotated = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(shotDir == 1 || shotDir == -1)
+        if(shotDir == 0 || shotDir == 2)
         {
-            transform.Translate(bulletSpeed * shotDir, 0, 0);
+            transform.Translate(bulletSpeed * (shotDir - 1), 0, 0);
+            if(isRotated)
+            {
+                transform.Rotate(Vector3.forward * -90);
+                isRotated = false;
+            }
         }
-        if (shotDir == 2 || shotDir == -2)
+        if (shotDir == 1 || shotDir == 3)
         {
-            transform.Translate(0, bulletSpeed * (shotDir/2), 0);
+            if (!isRotated)
+            {
+                transform.Rotate(Vector3.forward * 90);
+                isRotated = true;
+            }
+            transform.Translate(bulletSpeed * (shotDir - 2), 0, 0);   
         }
     }
 }
