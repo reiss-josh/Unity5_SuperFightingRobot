@@ -39,7 +39,6 @@ public class PlayerController : MonoBehaviour
         keyJump = (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W));
 
         grounded = checkGrounded();
-
         perf_movement();
         update_sprite();
     }
