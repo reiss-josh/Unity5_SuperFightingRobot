@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float move;
+    public float vMove;
     public float speed;
     public float jumpForce;
     public float groundRadius;
@@ -17,7 +18,8 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D rb2d;
     private Animator animator;
-    private bool keyJump = false;
+    private bool keyJump;
+    private bool jumped;
 
     void Start()
     {
@@ -26,16 +28,19 @@ public class PlayerController : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
       //init self vars
         move = 0;
-        speed = 6f;
-        jumpForce = 800f;
+        speed = 6.75f;
+        jumpForce = 850f;
         groundRadius = 0.2f;
         grounded = false;
         facingEast = true;
+        jumped = false;
+        keyJump = false;
     }
 
     void Update()
     {
         move = Input.GetAxisRaw("Horizontal");
+        vMove = Input.GetAxisRaw("Vertical");
         keyJump = (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W));
 
         grounded = checkGrounded();
@@ -49,7 +54,17 @@ public class PlayerController : MonoBehaviour
 
         //jump
         if (grounded && keyJump)
+        {
             rb2d.AddForce(new Vector2(0, jumpForce));
+            jumped = true;
+        }
+        
+        if(jumped && (vMove <= 0))
+        {
+            jumped = false;
+            if (rb2d.velocity.y > 0)
+                rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
+        }
     }
 
     //updates sprite
