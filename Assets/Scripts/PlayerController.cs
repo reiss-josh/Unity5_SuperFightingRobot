@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public float groundRadius;
     public bool grounded;
     public bool facingEast;
+    public MegaBullet megaBullet;
 
     public Transform GroundCheckL;
     public Transform GroundCheckR;
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb2d;
     private Animator animator;
     private bool keyJump;
+    private bool keyShoot;
     private bool jumped;
 
     void Start()
@@ -28,8 +30,8 @@ public class PlayerController : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
       //init self vars
         move = 0;
-        speed = 6f;
-        jumpForce = 800f;
+        speed = 6.75f;
+        jumpForce = 850f;
         groundRadius = 0.2f;
         grounded = false;
         facingEast = true;
@@ -42,9 +44,13 @@ public class PlayerController : MonoBehaviour
         move = Input.GetAxisRaw("Horizontal");
         vMove = Input.GetAxisRaw("Vertical");
         keyJump = (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W));
+        keyShoot = (Input.GetKeyDown(KeyCode.E));
 
+        
         grounded = checkGrounded();
         perf_movement();
+        if (keyShoot)
+            {perf_shoot();}
         update_sprite();
     }
 
@@ -65,6 +71,22 @@ public class PlayerController : MonoBehaviour
             if (rb2d.velocity.y > 0)
                 rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
         }
+    }
+
+    void perf_shoot()
+    {
+        MegaBullet bullet = Instantiate(megaBullet) as MegaBullet;
+        if (facingEast)
+        {
+            bullet.transform.position = new Vector2(rb2d.position.x + 1, rb2d.position.y);
+            bullet.shotDir = 2;
+        }
+        else
+        {
+            bullet.transform.position = new Vector2(rb2d.position.x - 1, rb2d.position.y);
+            bullet.shotDir = 0;
+        }
+        //do the animation
     }
 
     //updates sprite
