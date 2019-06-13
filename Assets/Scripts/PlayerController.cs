@@ -4,61 +4,52 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float move;
-    public float vMove;
-    public float speed;
+    public float move, vMove, speed;
     public float jumpForce;
     public float groundRadius;
     public bool grounded;
     public bool facingEast;
-    public float shotCooldownShort;
+    public float shotCooldownShort, shotCooldownMax;
     public float shotCountCooldownTop;
-    public float shotCooldownMax;
 
     public MegaBullet megaBullet;
-    public Transform GroundCheckL;
-    public Transform GroundCheckR;
+    public Transform GroundCheckL, GroundCheckR;
     public LayerMask groundLayers;
     private Rigidbody2D rb2d;
     private Animator animator;
     private AudioSource megaBusterSound;
 
-    private bool keyJump;
-    private bool keyShoot;
+    private bool keyJump, keyShoot;
     private bool jumped;
-    private bool isShot;
-    private bool didShotMax;
+    private bool isShot, didShotMax;
 
     private int shotCount;
-    private float shotCooldown;
-    private float shotCountCooldown;
+    private float shotCooldown, shotCountCooldown;
     
-    
-
     void Start()
     {
       //gather components
         animator = GetComponent<Animator>();
         rb2d = GetComponent<Rigidbody2D>();
         megaBusterSound = GetComponent<AudioSource>();
-        //init self vars
-        move = 0;
+      //init self vars
         speed = 6.75f;
         jumpForce = 850f;
         groundRadius = 0.2f;
+        grounded = false;
+        facingEast = true;
+        shotCooldownShort = 0.2f;
+        shotCooldownMax = 0.5f;
+        shotCountCooldownTop = 0.35f;
 
         shotCooldown = 0.5f;
         shotCountCooldown = 0.5f;
-        shotCooldownShort = 0.2f;
-        shotCountCooldownTop = 0.35f;
-        shotCooldownMax = 0.5f;
-        shotCount = 0;
-        didShotMax = false;
-        isShot = false;
-        grounded = false;
-        facingEast = true;
+
         jumped = false;
         keyJump = false;
+        isShot = false;
+        didShotMax = false;
+        shotCount = 0;
     }
 
     void Update()
@@ -194,7 +185,7 @@ public class PlayerController : MonoBehaviour
       //check right foot
         if (Physics2D.OverlapCircle(GroundCheckR.position, groundRadius, groundLayers))
             {return true;}
-      //give up+
+      //give up
         return false;
     }
 }
