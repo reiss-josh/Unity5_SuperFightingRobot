@@ -9,11 +9,15 @@ public class MegaBullet : MonoBehaviour
     public int shotDir;
 
     private bool isRotated;
+    private Vector2 startPoint;
+    private Transform tf;
 
     void Awake()
     {
+        tf = GetComponent<Transform>();
         bulletSpeed = 0.25f;
         isRotated = false;
+        startPoint = tf.position;
     }
 
     void horizUpdate()
@@ -39,9 +43,7 @@ public class MegaBullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if ((shotDir) == null)
-            shotDir = 2;
-        Debug.Log(shotDir);
+        //Debug.Log(shotDir);
         Vector2 vectorCheck = Vector2.right;
         if (shotDir == 0)
             vectorCheck = Vector2.left;
@@ -63,6 +65,10 @@ public class MegaBullet : MonoBehaviour
         {
             Destroy(gameObject);
             //Debug.Log(hit.collider.name);
+        }
+        if(Vector2.Distance(tf.position, startPoint) > 25.0f)
+        {
+            Destroy(gameObject);
         }
     }
 }

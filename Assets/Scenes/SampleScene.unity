@@ -955,9 +955,32 @@ PrefabInstance:
       propertyPath: m_Offset.x
       value: -0.325
       objectReference: {fileID: 0}
+    - target: {fileID: 722920682, guid: f96657f3be98c034e82771d9ff9f6e5b, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 160e0c3e82b19c04b876890fcd99cc51, type: 2}
     - target: {fileID: 722920683, guid: f96657f3be98c034e82771d9ff9f6e5b, type: 3}
       propertyPath: m_Offset.x
       value: 0.325
       objectReference: {fileID: 0}
+    - target: {fileID: 722920683, guid: f96657f3be98c034e82771d9ff9f6e5b, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 160e0c3e82b19c04b876890fcd99cc51, type: 2}
+    - target: {fileID: 6594799791122612359, guid: f96657f3be98c034e82771d9ff9f6e5b,
+        type: 3}
+      propertyPath: shotCooldownShort
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6594799791122612359, guid: f96657f3be98c034e82771d9ff9f6e5b,
+        type: 3}
+      propertyPath: shotCooldownMax
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6594799791122612358, guid: f96657f3be98c034e82771d9ff9f6e5b,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 160e0c3e82b19c04b876890fcd99cc51, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f96657f3be98c034e82771d9ff9f6e5b, type: 3}

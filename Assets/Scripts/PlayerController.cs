@@ -22,6 +22,12 @@ public class PlayerController : MonoBehaviour
     private bool keyJump;
     private bool keyShoot;
     private bool jumped;
+    private int shotCount;
+    private float shotCooldown;
+    public float shotCooldownShort;
+    public float shotCooldownMax;
+    private bool isShot;
+    private bool didShotMax;
 
     void Start()
     {
@@ -33,6 +39,13 @@ public class PlayerController : MonoBehaviour
         speed = 6.75f;
         jumpForce = 850f;
         groundRadius = 0.2f;
+
+        shotCooldown = 0.001f;
+        shotCooldownShort = 0.2f;
+        shotCooldownMax = 0.5f;
+        shotCount = 0;
+        didShotMax = false;
+        isShot = false;
         grounded = false;
         facingEast = true;
         jumped = false;
@@ -49,9 +62,49 @@ public class PlayerController : MonoBehaviour
         
         grounded = checkGrounded();
         perf_movement();
-        if (keyShoot)
-            {perf_shoot();}
+        if (keyShoot || isShot)
+        {
+            if (shotCooldown <= 0.0f)
+                { perf_shoot(); }
+            else if (!(didShotMax))
+                isShot = true;
+        }
+        if(shotCooldown > 0.0f)
+            {shotCooldown -= Time.deltaTime;}
         update_sprite();
+    }
+
+    void perf_shoot()
+    {
+        MegaBullet bullet = Instantiate(megaBullet) as MegaBullet;
+        if (facingEast)
+        {
+            bullet.transform.position = new Vector2(rb2d.position.x + 1.5f, rb2d.position.y+0.1f);
+            bullet.shotDir = 2;
+        }
+        else
+        {
+            bullet.transform.position = new Vector2(rb2d.position.x - 1.5f, rb2d.position.y+0.1f);
+            bullet.shotDir = 0;
+        }
+        //do the animation
+        //timing
+        didShotMax = false;
+        if (isShot == false)
+            { shotCount = 0; }
+        else
+        {
+            isShot = false;
+            shotCount++;
+        }
+        if (shotCount >= 2)
+        {
+            shotCooldown = shotCooldownMax;
+            shotCount = 0;
+            didShotMax = true;
+        }
+        else
+            shotCooldown = shotCooldownShort;
     }
 
     void perf_movement()
@@ -73,22 +126,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void perf_shoot()
-    {
-        MegaBullet bullet = Instantiate(megaBullet) as MegaBullet;
-        if (facingEast)
-        {
-            bullet.transform.position = new Vector2(rb2d.position.x + 1, rb2d.position.y);
-            bullet.shotDir = 2;
-        }
-        else
-        {
-            bullet.transform.position = new Vector2(rb2d.position.x - 1, rb2d.position.y);
-            bullet.shotDir = 0;
-        }
-        //do the animation
-    }
-
     //updates sprite
     void update_sprite()
     {
@@ -104,12 +141,17 @@ public class PlayerController : MonoBehaviour
         else
             {animator.SetTrigger("is_grounded");}
 
-      //set sprite if climbing
+        if (shotCooldown >= 0.0f)
+            { animator.SetTrigger("is_shooting"); }
+        else
+            { animator.ResetTrigger("is_shooting"); }
+
+        //set sprite if climbing
         /*
          * climbing sprite stuff
          */
 
-      //flip sprite based on direction
+        //flip sprite based on direction
         if (move > 0 && !facingEast)
             {Flip(); facingEast = true;}
         else if (move < 0 && facingEast)
