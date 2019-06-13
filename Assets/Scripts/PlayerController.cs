@@ -11,37 +11,46 @@ public class PlayerController : MonoBehaviour
     public float groundRadius;
     public bool grounded;
     public bool facingEast;
-    public MegaBullet megaBullet;
+    public float shotCooldownShort;
+    public float shotCountCooldownTop;
+    public float shotCooldownMax;
 
+    public MegaBullet megaBullet;
     public Transform GroundCheckL;
     public Transform GroundCheckR;
     public LayerMask groundLayers;
-
     private Rigidbody2D rb2d;
     private Animator animator;
+    private AudioSource megaBusterSound;
+
     private bool keyJump;
     private bool keyShoot;
     private bool jumped;
-    private int shotCount;
-    private float shotCooldown;
-    public float shotCooldownShort;
-    public float shotCooldownMax;
     private bool isShot;
     private bool didShotMax;
+
+    private int shotCount;
+    private float shotCooldown;
+    private float shotCountCooldown;
+    
+    
 
     void Start()
     {
       //gather components
         animator = GetComponent<Animator>();
         rb2d = GetComponent<Rigidbody2D>();
-      //init self vars
+        megaBusterSound = GetComponent<AudioSource>();
+        //init self vars
         move = 0;
         speed = 6.75f;
         jumpForce = 850f;
         groundRadius = 0.2f;
 
-        shotCooldown = 0.001f;
+        shotCooldown = 0.5f;
+        shotCountCooldown = 0.5f;
         shotCooldownShort = 0.2f;
+        shotCountCooldownTop = 0.35f;
         shotCooldownMax = 0.5f;
         shotCount = 0;
         didShotMax = false;
@@ -56,55 +65,65 @@ public class PlayerController : MonoBehaviour
     {
         move = Input.GetAxisRaw("Horizontal");
         vMove = Input.GetAxisRaw("Vertical");
-        keyJump = (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W));
-        keyShoot = (Input.GetKeyDown(KeyCode.E));
-
+        keyJump = Input.GetButtonDown("Jump");
+        keyShoot = Input.GetButtonDown("Fire1");
         
+
         grounded = checkGrounded();
         perf_movement();
-        if (keyShoot || isShot)
-        {
-            if (shotCooldown <= 0.0f)
-                { perf_shoot(); }
-            else if (!(didShotMax))
-                isShot = true;
-        }
-        if(shotCooldown > 0.0f)
-            {shotCooldown -= Time.deltaTime;}
+        perf_shoot();
         update_sprite();
     }
 
     void perf_shoot()
     {
-        MegaBullet bullet = Instantiate(megaBullet) as MegaBullet;
-        if (facingEast)
+        if (keyShoot || isShot)
         {
-            bullet.transform.position = new Vector2(rb2d.position.x + 1.5f, rb2d.position.y+0.1f);
-            bullet.shotDir = 2;
+            if (shotCooldown <= 0.0f)
+            {
+                megaBusterSound.Play(0);
+              //direction
+                MegaBullet bullet = Instantiate(megaBullet) as MegaBullet;
+                if (facingEast)
+                {
+                    bullet.transform.position = new Vector2(rb2d.position.x + 1.5f, rb2d.position.y + 0.1f);
+                    bullet.shotDir = 2;
+                }
+                else
+                {
+                    bullet.transform.position = new Vector2(rb2d.position.x - 1.5f, rb2d.position.y + 0.1f);
+                    bullet.shotDir = 0;
+                }
+            //timing
+                didShotMax = false;
+                if ((isShot == false) && (shotCountCooldown == 0.0f))
+                { shotCount = 0; }
+                else
+                {
+                    isShot = false;
+                    shotCount++;
+                }
+                if (shotCount >= 3)
+                {
+                    shotCooldown = shotCooldownMax;
+                    shotCount = 0;
+                    didShotMax = true;
+                }
+                else
+                    shotCooldown = shotCooldownShort;
+                shotCountCooldown = shotCountCooldownTop;
+            }
+            else if (!(didShotMax))
+                isShot = true;
         }
+        //more timing
+        if (shotCooldown > 0.0f)
+            { shotCooldown -= Time.deltaTime; }
+        if (shotCountCooldown > 0.0f)
+            { shotCountCooldown -= Time.deltaTime; }
         else
-        {
-            bullet.transform.position = new Vector2(rb2d.position.x - 1.5f, rb2d.position.y+0.1f);
-            bullet.shotDir = 0;
-        }
-        //do the animation
-        //timing
-        didShotMax = false;
-        if (isShot == false)
-            { shotCount = 0; }
-        else
-        {
-            isShot = false;
-            shotCount++;
-        }
-        if (shotCount >= 2)
-        {
-            shotCooldown = shotCooldownMax;
+            if (!isShot)
             shotCount = 0;
-            didShotMax = true;
-        }
-        else
-            shotCooldown = shotCooldownShort;
     }
 
     void perf_movement()
