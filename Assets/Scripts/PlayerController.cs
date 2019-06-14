@@ -38,9 +38,9 @@ public class PlayerController : MonoBehaviour
         groundRadius = 0.2f;
         grounded = false;
         facingEast = true;
-        shotCooldownShort = 0.2f;
+        shotCooldownShort = 0.15;
         shotCooldownMax = 0.5f;
-        shotCountCooldownTop = 0.35f;
+        shotCountCooldownTop = 0.3f;
 
         shotCooldown = 0.5f;
         shotCountCooldown = 0.5f;
